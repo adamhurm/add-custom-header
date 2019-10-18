@@ -1,16 +1,45 @@
 # Add a custom HTTP header in Burp
 
-## Quickstart:
+## Quickstart & Usage:
 
-If you trust this JAR file:
+### Compilation from source
 
- 1. Open the Extender tab
- 2. Select "Extensions" 
- 3. Select "Add" and pick the jar file from this repository
+ 1. Clone this repo
+ 1. Burp -> Extender -> APIs
+ 2. Select "Save interface files" from the bottom of the screen and
+    select a temporary location (e.g. `/tmp/foo`)
+ 3. Copy all `*.java` files into the `burp` directory containing this
+    repo source:
 
-If you don't trust the jar file (and why should you), instructions on how to compile it are below. 
+        cp /tmp/foo/burp/*.java burpAddCustomHeader/burp/
 
-Usage:
+ 4. Compile the source: 
+
+        cd burpAddCustomHeader
+        mkdir build 
+        javac -d build burp/BurpExtender.java burp/BurpTab.java
+
+ 5. Create a JAR file: 
+
+        cd build 
+        jar cvf ../out.jar .
+
+ 6. Install the `out.jar` file into Burp
+
+To design the GUI I've used Netbeans. The BurpTab.form file should be
+enough to recreate it.
+
+LifeProTip: hold the CTRL key when selecting the checkbox in the
+"Extensions" tab in Burp if you want to re-load an extension.
+
+### Dynamic Value Usage:
+ 1. Record a macro that fetches the dynamic value
+ 2. In the session handling rule, create an action to "Run a macro" and select the macro
+ 3. Enable "After running the macro, invoke a Burp extension action handler" and select "CSRF Token Maintainer"
+ 4. In the "CSRF Token Maintainer" tab, enter a regular expression that extracts the value from the macro response
+ 5. (No action needed) The extension will also automatically replace the CSRF Token in subsequent requests if the extension has already run.
+
+### Static Value Usage:
 
  1. After installed, select the "Add Custom Header" tab and pick a
     regular expression or a hard-coded value as shown below. Keep in
@@ -50,33 +79,4 @@ Using the token when accessing `/stuff`:
 
 ![token](screenshots/example-token.png)
 
-## Compilation from source
-
- 1. Clone this repo
- 1. Burp -> Extender -> APIs
- 2. Select "Save interface files" from the bottom of the screen and
-    select a temporary location (e.g. `/tmp/foo`)
- 3. Copy all `*.java` files into the `burp` directory containing this
-    repo source:
-
-        cp /tmp/foo/burp/*.java burpAddCustomHeader/burp/
-
- 4. Compile the source: 
-
-        cd burpAddCustomHeader
-        mkdir build 
-        javac -d build burp/BurpExtender.java burp/BurpTab.java
-
- 5. Create a JAR file: 
-
-        cd build 
-        jar cvf ../out.jar .
-
- 6. Install the `out.jar` file into Burp
-
-To design the GUI I've used Netbeans. The BurpTab.form file should be
-enough to recreate it.
-
-LifeProTip: hold the CTRL key when selecting the checkbox in the
-"Extensions" tab in Burp if you want to re-load an extension.
 
